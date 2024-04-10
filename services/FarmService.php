@@ -62,9 +62,9 @@ class FarmService
         ) {
             $this->wiki->config['yeswiki-farm-themes'][0]['label'] = 'Margot (theme de base)';
             $this->wiki->config['yeswiki-farm-themes'][0]['screenshot'] = 'margot.jpg';
-            $this->wiki->config['yeswiki-farm-themes'][0]['theme'] = 'margot';
-            $this->wiki->config['yeswiki-farm-themes'][0]['squelette'] = '1col.tpl.html';
-            $this->wiki->config['yeswiki-farm-themes'][0]['style'] = 'margot.css';
+            $this->wiki->config['yeswiki-farm-themes'][0]['theme'] = THEME_PAR_DEFAUT;
+            $this->wiki->config['yeswiki-farm-themes'][0]['squelette'] = SQUELETTE_PAR_DEFAUT;
+            $this->wiki->config['yeswiki-farm-themes'][0]['style'] = CSS_PAR_DEFAUT;
         } else {
             // verifier l'existence des themes
             foreach ($this->wiki->config['yeswiki-farm-themes'] as $key => $theme) {
@@ -791,18 +791,20 @@ class FarmService
     public function rrmdir($src)
     {
         $dir = opendir($src);
-        while (false !== ($file = readdir($dir))) {
-            if (($file != '.') && ($file != '..')) {
-                $full = $src . '/' . $file;
-                if (is_dir($full)) {
-                    $this->rrmdir($full);
-                } else {
-                    unlink($full);
+        if ($dir) {
+            while (false !== ($file = readdir($dir))) {
+                if (($file != '.') && ($file != '..')) {
+                    $full = $src . '/' . $file;
+                    if (is_dir($full)) {
+                        $this->rrmdir($full);
+                    } else {
+                        unlink($full);
+                    }
                 }
             }
+            closedir($dir);
+            rmdir($src);
         }
-        closedir($dir);
-        rmdir($src);
     }
 
     /**
